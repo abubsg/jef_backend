@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const courseRatingsSchema = new Schema(
+const eventsSchema = new Schema(
   {
     course: { type: Schema.Types.ObjectId, ref: "Course" },
     feedBack: {
@@ -14,4 +14,4 @@ const courseRatingsSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = User = mongoose.model("course_ratings", courseRatingsSchema);
+module.exports = Events = mongoose.model("events", eventsSchema);
