@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const error = require("../middleware/error");
-// const course = require("../routes/api/course");
+const beneficiaries = require("../routes/api/beneficiaries");
 // const category = require("../routes/api/category");
 // const enroll = require("../routes/api/enrollRoute");
 // const lecture = require("../routes/api/lecture");
@@ -16,7 +16,7 @@ module.exports = function (app) {
   app.use(express.json());
   app.use(cors());
   app.options("*", cors());
-  // app.use("/api/courses", course);
+  app.use("/api/beneficiaries", beneficiaries);
   // app.use("/api/categories", category);
   // app.use("/api/lectures", lecture);
   // app.use("/api/discussions", discussion);

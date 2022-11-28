@@ -1,4 +1,4 @@
-let CourseModel = require("../../models/beneficiaries.model");
+let DoneeModel = require("../../models/beneficiaries.model");
 let express = require("express");
 let router = express.Router();
 const path = require("path");
@@ -14,23 +14,26 @@ router.post("/", async (req, res) => {
     return res.status(400).send("course image missing");
   }
 
-  const newCourse = await new CourseModel({
-    courseName: req.body.courseName,
-    courseCode: req.body.courseCode,
-    courseDescription: req.body.courseDescription,
-    courseStartDate: Date.parse(req.body.courseStartDate),
-    courseEndDate: Date.parse(req.body.courseEndDate),
-    cost: req.body.cost,
-    class: req.body.class,
-    no_of_modules: req.body.no_of_modules,
-    tags: req.body.tags,
-    objectives: req.body.objectives,
-    announcements: [],
-    liveSessions: [],
-    instructor: req.body.instructor,
-    category: req.body.category,
+  const newCourse = await new DoneeModel({
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    name: req.body.name,
+    levelOfEduc: req.body.levelOfEduc,
+    email: req.body.email,
+    phone: req.body.phone,
+    dob: Date.parse(req.body.dob),
+    nationality: req.body.nationality,
+    role: req.body.role,
+    gender: req.body.gender,
+    employment_history: {},
+    bank_details: {},
+    skills: {},
+    validID: {
+      id_type: "NIN",
+      id_no: "NIN9048509835809850940",
+    },
 
-    capturedBy: req.body.capturedBy,
+    password: req.body.password,
   });
   const courseDir = newCourse._id;
 
@@ -70,78 +73,9 @@ router.post("/", async (req, res) => {
   });
 });
 
-// add announcement
-router.route("/add/:id").post((req, res) => {
-  CourseModel.findById(req.params.id)
-    .then((CourseModel) => {
-      CourseModel.announcements.push(req.body);
-      CourseModel.save()
-        .then(() => res.json("CourseModel address added!"))
-        .catch((err) => res.status(400).json("Error:" + err));
-    })
-    .catch((err) => res.status(400).json("Error:" + err));
-});
-
-//updating announcements array.
-router.route("/updateAnnouncement/:id").post((req, res) => {
-  const anouncemntId = req.query.anouncemntId;
-  CourseModel.findById(req.params.id)
-    .then((doc) => {
-      const currentDoc = doc.announcements.find((el) => el.id == anouncemntId);
-      const currentDocIdx = doc.announcements.indexOf(currentDoc);
-
-      doc.announcements[currentDocIdx].activity = req.body.activity;
-      doc.announcements[currentDocIdx].date = req.body.date;
-      doc.announcements[currentDocIdx].description = req.body.description;
-      doc.markModified("announcements");
-
-      doc
-        .save()
-        .then((saves) => {
-          res.json(doc);
-        })
-        .catch((err) => res.status(400).json("Error:" + err));
-    })
-    .catch((err) => res.status(400).json("Error:" + err));
-});
-
-// add Syllabus
-router.route("/addSyllabus/:id").post((req, res) => {
-  CourseModel.findById(req.params.id)
-    .then((CourseModel) => {
-      CourseModel.syllabus.push(req.body);
-      CourseModel.save()
-        .then(() => res.json("CourseModel address added!"))
-        .catch((err) => res.status(400).json("Error:" + err));
-    })
-    .catch((err) => res.status(400).json("Error:" + err));
-});
-
-//updating syllabus array.
-router.route("/updateSyllabus/:id").post((req, res) => {
-  const syllabusId = req.query.syllabusId;
-  CourseModel.findById(req.params.id)
-    .then((doc) => {
-      const currentDoc = doc.syllabus.find((el) => el.id == syllabusId);
-      const currentDocIdx = doc.syllabus.indexOf(currentDoc);
-
-      doc.syllabus[currentDocIdx].title = req.body.title;
-      doc.syllabus[currentDocIdx].objectives = req.body.objectives;
-      doc.markModified("syllabus");
-
-      doc
-        .save()
-        .then((saves) => {
-          res.json(doc);
-        })
-        .catch((err) => res.status(400).json("Error:" + err));
-    })
-    .catch((err) => res.status(400).json("Error:" + err));
-});
-
 //  get all
 router.get("/", (req, res) => {
-  CourseModel
+  DoneeModel
     .find
     // { status: true }
     ()
@@ -165,7 +99,7 @@ router.get("/byCategory", (req, res) => {
   const pageNumber = req.query.pageNumber;
   const pageSize = req.query.pageSize;
 
-  CourseModel.find({
+  DoneeModel.find({
     category: req.query.category,
     status: true,
   })
@@ -226,7 +160,7 @@ router.put("/changeCourseImage/:id", (req, res) => {
 
 // find by id
 router.route("/:id/").get((req, res) => {
-  CourseModel.findOne({ _id: req.params.id })
+  DoneeModel.findOne({ _id: req.params.id })
     .populate({ path: "category", model: "category", select: "categoryName" })
     .populate({
       path: "instructor",
@@ -242,7 +176,7 @@ router.get("/instructor/:id/", (req, res) => {
   const pageNumber = req.query.pageNumber;
   const pageSize = req.query.pageSize;
 
-  CourseModel.find({
+  DoneeModel.find({
     instructor: req.params.id,
   })
     .skip((pageNumber - 1) * pageSize)
@@ -263,7 +197,7 @@ router.get("/instructor/:id/", (req, res) => {
 
 // counting the #of courses per instructor id
 router.get("/instructor/count/:id", (req, res) => {
-  CourseModel.find({
+  DoneeModel.find({
     instructor: req.params.id,
   })
     .count()
@@ -275,7 +209,7 @@ router.get("/instructor/count/:id", (req, res) => {
 
 // updating a course
 router.put("/:id/", (req, res) => {
-  CourseModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  DoneeModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((doc) => {
       res.json(doc);
     })
@@ -285,7 +219,7 @@ router.put("/:id/", (req, res) => {
 });
 
 router.delete("/:id/", (req, res) => {
-  CourseModel.findOneAndRemove({
+  DoneeModel.findOneAndRemove({
     _id: req.params.id,
   })
     .then((doc) => {

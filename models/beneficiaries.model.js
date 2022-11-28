@@ -112,5 +112,5 @@ function validateUser(donee) {
 // }
 
 exports.Donee = Donee;
-exports.validate = validateDonee;
+// exports.validate = validateDonee;
 // exports.validatePay = validatePay;
