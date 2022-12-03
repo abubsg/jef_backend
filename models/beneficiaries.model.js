@@ -43,18 +43,18 @@ const doneeSchema = new mongoose.Schema({
     minLength: 5,
   },
   dob: { type: Date, required: true },
-  nationality: { type: Object },
+  nationality: { type: String, required: true },
   password: { type: String, minLength: 4, maxLength: 1024, required: true },
-  role: { type: String, enum: ["widow", "orphan"] },
+  role: { type: String, enum: ["widow", "orphan"], required: true },
   gender: {
     type: String,
     required: true,
     minLength: 3,
     maxLength: 50,
   },
-  employment_history: { type: Object },
+  // employment_history: { type: Object },
   bank_details: { type: Object },
-  skills: { type: Object },
+  // skills: { type: Object },
   validID: {
     id_type: { type: String, required: true },
     id_no: { type: String, required: true },
@@ -67,6 +67,8 @@ const doneeSchema = new mongoose.Schema({
     type: String,
     default: "assets/default.svg",
   },
+
+  isVerified: { type: Boolean, default: false, enum: [true, false] },
 });
 
 doneeSchema.methods.generateAuthToken = function () {
@@ -80,7 +82,7 @@ doneeSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-const Donee = mongoose.model("Donee", doneeSchema);
+const Donee = mongoose.model("donee", doneeSchema);
 
 function validateUser(donee) {
   const schema = Joi.object({
@@ -111,6 +113,6 @@ function validateUser(donee) {
 //   return schema.validate(paymentDetail);
 // }
 
-exports.Donee = Donee;
+module.exports = Donee;
 // exports.validate = validateDonee;
 // exports.validatePay = validatePay;

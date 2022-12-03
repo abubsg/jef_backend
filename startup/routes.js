@@ -2,9 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const error = require("../middleware/error");
 const beneficiaries = require("../routes/api/beneficiaries");
-// const category = require("../routes/api/category");
-// const enroll = require("../routes/api/enrollRoute");
-// const lecture = require("../routes/api/lecture");
+const role = require("../routes/api/role");
+const events = require("../routes/api/events");
+const sponsors = require("../routes/api/sponsors");
 // const discussion = require("../routes/api/discussion");
 // const courseRate = require("../routes/api/courseRating");
 const user = require("../routes/api/users");
@@ -17,11 +17,11 @@ module.exports = function (app) {
   app.use(cors());
   app.options("*", cors());
   app.use("/api/beneficiaries", beneficiaries);
-  // app.use("/api/categories", category);
-  // app.use("/api/lectures", lecture);
+  app.use("/api/role", role);
+  app.use("/api/events", events);
+  app.use("/api/sponsor", sponsors);
   // app.use("/api/discussions", discussion);
   // app.use("/api/courseRate", courseRate);
-  // app.use("/api/enroll", enroll);
   app.use("/api/users", user);
   app.use("/api/auth", auth);
 

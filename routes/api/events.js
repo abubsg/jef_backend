@@ -1,92 +1,121 @@
 const express = require("express");
 const router = express.Router();
-const CourseModel = require("../../models/beneficiaries.model");
-const LectureModel = require("../../models/lectures.model");
+const EventsModel = require("../../models/events.model");
 const path = require("path");
 const _data = require("../../lib/data");
 const getFileTypeFromMime = require("../../hooks/getFileType");
 const logger = require("../../startup/logging");
 
-/*Get lecturesByCourseId*/
-router.get("/lecturesByCourseId/:id", function (req, res) {
-  LectureModel.find({
-    course: req.params.id,
-  })
-    .populate({ path: "course", model: "courses", select: "courseDescription" })
+// get all events
+router.get("/all", async (req, res) => {
+  EventsModel.find()
+    // .where(startDate)
+    .populate({
+      path: "postedBy",
+      model: "User",
+      select: ["role", "email", "first_name", "last_name", "name"],
+    })
+    .then((docs) => res.status(200).json(docs))
+    .catch((err) => res.status(500).send("try again later"));
+});
+
+// get all future events
+router.get("/allFuture", async (req, res) => {
+  EventsModel.find()
+    .populate({
+      path: "postedBy",
+      model: "User",
+      select: ["role", "email", "first_name", "last_name", "name"],
+    })
+    .then((docs) => res.status(200).json(docs))
+    .catch((err) => res.status(500).send("try again later"));
+});
+
+/*Get events By ID (month)*/
+router.get("/eventsByID/:id", function (req, res) {
+  EventsModel.findById(req.params.id)
+    .populate({
+      path: "postedBy",
+      model: "User",
+      select: ["role", "email", "first_name", "last_name", "name"],
+    })
     .then((doc) => {
-      // res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
-      //res.setHeader('Content-Range', 'users 0-5/5');
       res.json(doc);
-      // console.log("populated doc:" + doc);
     })
     .catch((err) => {
       res.status(500).json(err);
     });
 });
 
-/*Get lectures By ID*/
-router.get("/lectureById/:id", function (req, res) {
-  LectureModel.findById(req.params.id)
-    .populate({ path: "course", model: "courses" })
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
-});
+/*Get events By date (month)*/
+// router.get("/eventsByDate/", function (req, res) {
+//   EventsModel.findById(req.params.id)
+//     .populate({
+//       path: "postedBy",
+//       model: "User",
+//       select: ["role", "email", "first_name", "last_name", "name"],
+//     })
+//     .then((doc) => {
+//       res.json(doc);
+//     })
+//     .catch((err) => {
+//       res.status(500).json(err);
+//     });
+// });
 
-// add new module
+// add a new event
 router.post("/", async (req, res) => {
+  const { postedBy, description, title, startDate, endDate } = req.body;
   // validating if there is req.body
-  if (!req.body) {
+  if (!(postedBy && description && title && startDate)) {
     return res.status(400).send("Required fields missing");
-  } else if (!req.files) {
-    return res.status(400).send("course image missing");
   }
 
-  const course = req.body.course;
-  const moduleNo = req.body.moduleNo;
-  const newModule = new LectureModel({
-    title: req.body.title,
-    mediaLink: req.body.mediaLink,
-    mediaLinkExt: req.body.mediaLinkExt,
-    videoLink: req.body.videoLink,
-    contentType: req.body.contentType,
-    description: req.body.description,
-    externalLinks: req.body.externalLinks,
-    tags: req.body.tags,
-    objectives: req.body.objectives,
-    moduleNo,
-    course,
-
-    capturedBy: req.body.capturedBy,
+  const newEvent = new EventsModel({
+    postedBy,
+    description,
+    title,
+    startDate,
+    endDate,
+    upload: [],
   });
 
-  const moduleDir = newModule._id;
+  const eventsDir = newEvent._id;
+
+  function saveToDB() {
+    // Save the new module to database
+    newEvent
+      .save()
+      .then((doc) => res.status(200).json(doc))
+      .catch((err) => {
+        _data.deleteDir(`.data/events/${eventsDir}`, () =>
+          res.status(500).send("try again later")
+        );
+      });
+  }
 
   // Save the media to a dir
-  _data.createDir(moduleDir, _data.baseDir + "/" + course, (err) => {
+  _data.createDir(eventsDir, _data.baseDir + "/events", async (err) => {
     if (err) {
       return res.status(500).send(err);
     } else {
       // save course image to the dir
       try {
         if (req.files) {
-          const mediaLink = req.files.mediaLink.map((media, idx) => {
+          const mediaLink = await req.files.mediaLink.map((media, idx) => {
             let newFile = media;
 
             // get the file extension
             const mediaLinkExt = path.extname(newFile.name);
 
             // change the file name
-            newFile.name = `module${moduleNo}${idx}${mediaLinkExt}`;
+            newFile.name = `event_${title}_${idx}${mediaLinkExt}`;
 
             // function to get the mimetype of the file
             const mediaLinkMime = newFile.mimetype;
 
             //Use the mv() method to place the file in the course directory
-            const filePath = `.data/${course}/${moduleDir}/${newFile.name}`;
+            const filePath = `.data/events/${eventsDir}/${newFile.name}`;
             newFile.mv(filePath);
 
             return {
@@ -99,17 +128,11 @@ router.post("/", async (req, res) => {
           });
 
           // save the media proterties arr in the document
-          newModule.mediaLink = mediaLink;
+          newEvent.upload = mediaLink;
 
-          // Save the new module to database
-          newModule
-            .save()
-            .then((doc) => res.status(200).json(doc))
-            .catch((err) => {
-              _data.deleteDir(`.data/${course}/${moduleDir}`, () =>
-                res.status(400).send("Course code is not unique, already exits")
-              );
-            });
+          saveToDB();
+        } else {
+          saveToDB();
         }
       } catch (err) {
         return res.status(500).send(err);
@@ -118,8 +141,8 @@ router.post("/", async (req, res) => {
   });
 });
 
-// downloading Module Media
-router.get("/downloadLectureMedia/", (req, res) => {
+// downloading Event Media
+router.get("/downloadEventMedia/", (req, res) => {
   const dirname = req.query.fileName;
   const mediaPath = path.join(_data.baseDirPath, dirname);
 
@@ -130,19 +153,9 @@ router.get("/downloadLectureMedia/", (req, res) => {
   }
 });
 
-// counting the no of module for a course
-router.get("/count/:id", (req, res) => {
-  LectureModel.findOne({ course: req.params.id })
-    .count()
-    .then((no) => res.json(no))
-    .catch((err) => {
-      res.status(400).json("invalid course id");
-    });
-});
-
-// updating a module
-router.put("/:id/", (req, res) => {
-  LectureModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+// updating an event
+router.put("/details/:id/", (req, res) => {
+  EventsModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((doc) => {
       res.json(doc);
     })
@@ -151,12 +164,13 @@ router.put("/:id/", (req, res) => {
     });
 });
 
-router.put("/changeLectureMaterials/:id", (req, res) => {
+// in progress
+router.put("/changeEventMedia/:id", (req, res) => {
   if (!req.files) {
     return res.status(400).send("No files uploaded");
   }
 
-  LectureModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  EventsModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then(async (doc) => {
       const course = doc.course;
       const moduleDir = doc._id;

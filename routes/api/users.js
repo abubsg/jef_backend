@@ -7,8 +7,8 @@ const _data = require("../../lib/data");
 const path = require("path");
 //Load user model for email exist checking
 const _ = require("lodash");
-const { User, validate, validatePay } = require("../../models/user.model");
-const { initializePay, verifyPayment } = require("./paystack");
+const { User, validate } = require("../../models/user.model");
+// const { initializePay, verifyPayment } = require("./paystack");
 
 // @route  GET   api/users/
 // @desc   Register users route
@@ -27,25 +27,8 @@ router.get("/", async (req, res) => {
   const user = await User.find().select("-password");
   res.send(user);
 });
-router.get("/verifyPay", async (req, res) => {
-  if (!req.query.reference) return res.status(400).send("no refernce");
-  const result = await verifyPayment(req.query.reference);
-  res.send(result);
-});
 
-router.post("/pay", async (req, res) => {
-  // console.log("Paying...", req.body);
-  const { error } = validatePay(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  const result = await initializePay(req.body);
-  if (result.status == undefined)
-    return res
-      .status(500)
-      .send("Network Error. make sure you are connected to internet");
-  res.send(result.data);
-});
-
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
   // console.log(req.body);
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -58,14 +41,10 @@ router.post("/", async (req, res) => {
     email: req.body.email,
     password: req.body.password,
     role: req.body.role,
-    levelOfEduc: req.body.levelOfEduc,
     phone: req.body.phone,
     gender: req.body.gender,
     dob: req.body.dob,
     name: `${req.body.last_name} ${req.body.first_name}`,
-    address: req.body.address,
-    registration: req.body.registration,
-    specialization: req.body.specialization,
   });
 
   const salt = await bcrypt.genSalt(10);

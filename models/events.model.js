@@ -6,18 +6,9 @@ const eventsSchema = new Schema(
     postedBy: { type: Schema.Types.ObjectId, ref: "User" },
     description: { type: String },
     title: { type: String, required: true },
-    upload: [String],
+    upload: [Object],
     startDate: { type: Date },
     endDate: { type: Date },
-
-    //
-    // course: { type: Schema.Types.ObjectId, ref: "Course" },
-    // feedBack: {
-    //   studentID: { type: Schema.Types.ObjectId, ref: "User" },
-    //   rating: { type: Number, required: true },
-    //   comment: { type: String },
-    //   suggestion: { type: String },
-    // },
   },
   { timestamps: true }
 );

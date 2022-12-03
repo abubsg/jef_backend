@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const eventsSchema = new Schema(
+const sponsorsSchema = new Schema(
   {
     email: { type: String },
     first_name: { type: String },
@@ -11,4 +11,4 @@ const eventsSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = Events = mongoose.model("events", eventsSchema);
+module.exports = Sponsor = mongoose.model("sponsor", sponsorsSchema);

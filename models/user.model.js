@@ -3,27 +3,6 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const studeSchema = new mongoose.Schema({
-  startDate: {
-    type: Date,
-  },
-  endDate: {
-    type: Date,
-  },
-  paymentDate: {
-    type: Date,
-    default: Date.now,
-  },
-  status: {
-    type: String,
-    enum: ["paid", "unpaid", "expired"],
-    default: "unpaid",
-  },
-  reference: {
-    type: String,
-  },
-});
-
 const userSchema = new mongoose.Schema({
   first_name: {
     type: String,
@@ -38,10 +17,6 @@ const userSchema = new mongoose.Schema({
     maxLength: 50,
   },
   name: { type: String },
-  levelOfEduc: {
-    type: String,
-    enum: ["Diploma", "BSc", "Post Grad"],
-  },
   email: {
     required: true,
     type: String,
@@ -57,27 +32,15 @@ const userSchema = new mongoose.Schema({
     minLength: 5,
   },
   dob: { type: Date },
-  address: { type: Object },
   password: { type: String, minLength: 4, maxLength: 1024, required: true },
-  role: { type: String, enum: ["student", "instructor", "admin"] },
-  registration: {
-    type: studeSchema,
-  },
+  role: { type: String, enum: ["admin", "volunteer", "staff"] },
   gender: {
     type: String,
     required: true,
     minLength: 3,
     maxLength: 50,
   },
-  specialization: { type: String },
-  amount: {
-    type: Number,
-    min: 0,
-  },
-  pic: {
-    type: String,
-    default: "assets/default.svg",
-  },
+  token: { type: String, default: null },
 });
 
 userSchema.methods.generateAuthToken = function () {
@@ -97,31 +60,16 @@ function validateUser(user) {
   const schema = Joi.object({
     first_name: Joi.string().required().min(3).max(50),
     last_name: Joi.string().required().min(3).max(50),
-    levelOfEduc: Joi.string(),
     email: Joi.string().required().min(3).max(50),
     phone: Joi.string().required().min(5).max(20),
     dob: Joi.date(),
     gender: Joi.string().required().min(3),
-    address: Joi.object(),
     password: Joi.string().required().min(4).max(255),
     role: Joi.string(),
-    amount: Joi.number().min(0),
-    specialization: Joi.string(),
-    registration: Joi.object(),
   });
 
   return schema.validate(user);
 }
 
-function validatePay(paymentDetail) {
-  const schema = Joi.object({
-    amount: Joi.number().required(),
-    email: Joi.string().required(),
-    first_name: Joi.string(),
-  });
-  return schema.validate(paymentDetail);
-}
-
 exports.User = User;
 exports.validate = validateUser;
-exports.validatePay = validatePay;
