@@ -21,13 +21,8 @@ module.exports = function (app) {
   app.use("/api/beneficiaries", beneficiaries);
   app.use("/api/role", role);
   app.use("/api/events", events);
-<<<<<<< HEAD
   app.use("/api/sponsors", sponsors);
-  // app.use("/api/discussions", discussion);
-=======
-  app.use("/api/sponsor", sponsors);
   app.use("/api/app_configs", app_config);
->>>>>>> 795f1cdc447295dfcfb55f3a6a587a5c913fd242
   // app.use("/api/courseRate", courseRate);
   app.use("/api/users", user);
   app.use("/api/auth", auth);

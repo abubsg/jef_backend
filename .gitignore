@@ -6,7 +6,7 @@
 .pnp.js
 
 # media
-/.data/
+# /.data/
 
 # testing
 /coverage
