@@ -33,7 +33,7 @@ router.post("/register", async (req, res) => {
         password
       )
     ) {
-      res.status(400).send("Missing required fields");
+      return res.status(400).send("Missing required fields");
     }
 
     // check if user exists
@@ -110,6 +110,13 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+router.get("/all", async (req, res) => {
+  User.find()
+    .select("-password")
+    .then((docs) => res.status(200).json(docs))
+    .catch((err) => res.status(500).send("Something went wrong"));
 });
 
 router.get("/auth", auth, async (req, res) => {

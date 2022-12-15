@@ -21,7 +21,7 @@ module.exports = function (app) {
   app.use("/api/beneficiaries", beneficiaries);
   app.use("/api/role", role);
   app.use("/api/events", events);
-  app.use("/api/sponsor", sponsors);
+  app.use("/api/sponsors", sponsors);
   app.use("/api/app_configs", app_config);
   // app.use("/api/courseRate", courseRate);
   app.use("/api/users", user);
