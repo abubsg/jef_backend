@@ -24,16 +24,8 @@ router.post("/", async (req, res) => {
   // validating if there is req.body
   if (
     !(
-      first_name &&
-      last_name &&
-      levelOfEduc &&
-      email &&
-      phone &&
-      dob &&
-      nationality &&
-      role &&
-      gender &&
-      password
+      (first_name && last_name && levelOfEduc) ||
+      (email && phone && dob && nationality && role && gender && password)
     )
   ) {
     return res.status(400).send("Required fields missing");
