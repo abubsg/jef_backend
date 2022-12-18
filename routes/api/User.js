@@ -37,9 +37,12 @@ router.post("/register", async (req, res) => {
     }
 
     // check if user exists
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ email: email, phone: phone });
+    const existingUser1 = await User.findOne({ phone: phone });
     if (existingUser) {
-      res.status(400).send("User already exists with this email");
+      return res.status(400).send("User already exists with this email");
+    } else if (existingUser1) {
+      return res.status(400).send("User already exists with this phone");
     }
 
     // encript password
@@ -65,9 +68,9 @@ router.post("/register", async (req, res) => {
     user.token = token;
     user.password = undefined;
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (err) {
-    console.log(err);
+    return res.status(400).send("Invalid fields");
   }
 });
 
