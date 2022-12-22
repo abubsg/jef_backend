@@ -29,10 +29,6 @@ router.post("/", async (req, res) => {
   // validating if there is req.body
   if (
     !(
-<<<<<<< HEAD
-      (first_name && last_name && levelOfEduc) ||
-      (email && phone && dob && nationality && role && gender && password)
-=======
       first_name &&
       last_name &&
       levelOfEduc &&
@@ -42,7 +38,6 @@ router.post("/", async (req, res) => {
       nationality &&
       role &&
       gender
->>>>>>> 1e8d54bfbd8141a3ae2dcec6bd22cfee41bdfc0a
     )
   ) {
     return res.status(400).send("Required fields missing");
@@ -75,7 +70,9 @@ router.post("/", async (req, res) => {
       .catch((err) => {
         _data.deleteDir(`.data/donee/${doneeDir}`, (delerr) => {
           if (delerr) console.log(delerr);
-          res.status(400).send("Phone, email, nin is not unique, already exits");
+          res
+            .status(400)
+            .send("Phone, email, nin is not unique, already exits");
         });
       });
   }
