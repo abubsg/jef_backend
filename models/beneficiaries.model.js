@@ -20,12 +20,12 @@ const doneeSchema = new mongoose.Schema({
   levelOfEduc: {
     type: String,
     enum: [
-      "Basic/Primary",
+      "Basic/Primary/Elementary",
       "JSCE/Middle_school",
       "SSCE/High_school",
       "Diploma",
-      "BSc",
-      "Post Grad",
+      "undergraduate",
+      "graduate",
     ],
   },
   email: {
@@ -43,8 +43,8 @@ const doneeSchema = new mongoose.Schema({
     minLength: 5,
   },
   dob: { type: Date, required: true },
-  nationality: { type: String, required: true },
-  password: { type: String, minLength: 4, maxLength: 1024, required: true },
+  nationality: { type: Object, required: true },
+  // password: { type: String, minLength: 4, maxLength: 1024, required: true },
   role: { type: String, enum: ["widow", "orphan"], required: true },
   gender: {
     type: String,
@@ -52,20 +52,27 @@ const doneeSchema = new mongoose.Schema({
     minLength: 3,
     maxLength: 50,
   },
-  // employment_history: { type: Object },
   bank_details: { type: Object },
-  // skills: { type: Object },
+  employment_history: { type: Array },
+  skills: { type: Array },
   validID: {
-    id_type: { type: String, required: true },
-    id_no: { type: String, required: true },
-    pic: {
+    id_type: { type: String },
+    id_no: { type: String },
+    path: {
       type: String,
       default: "assets/default.svg",
     },
+    extName: { type: String },
+    ID_imageLinkMime: { type: String },
+    name: { type: String },
+    type: { type: String },
   },
-  pic: {
-    type: String,
-    default: "assets/default.svg",
+  avatar: {
+    path: { type: String, default: "assets/default.svg" },
+    extName: { type: String },
+    avatarLinkMime: { type: String },
+    name: { type: String },
+    type: { type: String },
   },
 
   isVerified: { type: Boolean, default: false, enum: [true, false] },

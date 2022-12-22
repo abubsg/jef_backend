@@ -3,6 +3,7 @@ let express = require("express");
 let router = express.Router();
 const path = require("path");
 const _data = require("../../lib/data");
+const getFileTypeFromMime = require("../../hooks/getFileType");
 const logger = require("../../startup/logging");
 
 // add new Donee
@@ -17,10 +18,14 @@ router.post("/", async (req, res) => {
     nationality,
     role,
     gender,
-    password,
     bank_details,
     validID,
+    employment_history,
+    skills,
+    id_no,
+    idType,
   } = req.body;
+
   // validating if there is req.body
   if (
     !(
@@ -32,8 +37,7 @@ router.post("/", async (req, res) => {
       dob &&
       nationality &&
       role &&
-      gender &&
-      password
+      gender
     )
   ) {
     return res.status(400).send("Required fields missing");
@@ -52,15 +56,95 @@ router.post("/", async (req, res) => {
     gender,
     bank_details,
     validID,
-    password,
+    employment_history,
+    skills,
   });
 
-  newDonee
-    .save()
-    .then((doc) => res.status(200).json(doc))
-    .catch((err) => {
-      res.status(400).send("Phone, email, nin is not unique, already exits");
-    });
+  const doneeDir = newDonee._id;
+
+  function saveToDB() {
+    // Save the new module to database
+    newDonee
+      .save()
+      .then((doc) => res.status(200).json(doc))
+      .catch((err) => {
+        _data.deleteDir(`.data/donee/${doneeDir}`, (delerr) => {
+          if (delerr) console.log(delerr);
+          res.status(400).send("Phone, email, nin is not unique, already exits");
+        });
+      });
+  }
+
+  // Save the Avatar to a dir
+  _data.createDir(doneeDir, _data.baseDir + "/donee", async (err) => {
+    if (err) {
+      return res.status(500).send(err);
+    } else {
+      // save course image to the dir
+      try {
+        if (req.files) {
+          if (req.files.ID_image) {
+            let newFile = req.files.ID_image;
+
+            // get the file extension
+            const ID_imageLinkExt = path.extname(newFile.name);
+
+            // change the file name
+            newFile.name = `validID${ID_imageLinkExt}`;
+
+            // function to get the mimetype of the file
+            const ID_imageLinkMime = newFile.mimetype;
+
+            //Use the mv() method to place the file in the donee directory
+            const filePath = `.data/donee/${doneeDir}/${newFile.name}`;
+            newFile.mv(filePath);
+
+            // save the media proterties arr in the document
+            newDonee.validID = {
+              id_no: id_no,
+              id_type: idType,
+              path: filePath,
+              extName: ID_imageLinkExt,
+              ID_imageLinkMime,
+              name: newFile.name,
+              type: getFileTypeFromMime(ID_imageLinkMime, ID_imageLinkExt),
+            };
+          }
+          if (req.files.avatar) {
+            let newFile = req.files.avatar;
+
+            // get the file extension
+            const avatarLinkExt = path.extname(newFile.name);
+
+            // change the file name
+            newFile.name = `avatar${avatarLinkExt}`;
+
+            // function to get the mimetype of the file
+            const avatarLinkMime = newFile.mimetype;
+
+            //Use the mv() method to place the file in the donee directory
+            const filePath = `.data/donee/${doneeDir}/${newFile.name}`;
+            newFile.mv(filePath);
+
+            // save the media proterties arr in the document
+            newDonee.avatar = {
+              path: filePath,
+              extName: avatarLinkExt,
+              avatarLinkMime,
+              name: newFile.name,
+              type: getFileTypeFromMime(avatarLinkMime, avatarLinkExt),
+            };
+          }
+
+          saveToDB();
+        } else {
+          saveToDB();
+        }
+      } catch (err) {
+        return res.status(500).send(err);
+      }
+    }
+  });
 });
 
 // find donee by id
