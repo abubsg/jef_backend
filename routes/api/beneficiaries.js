@@ -24,6 +24,7 @@ router.post("/", async (req, res) => {
     skills,
     id_no,
     idType,
+    story,
   } = req.body;
 
   // validating if there is req.body
@@ -37,7 +38,8 @@ router.post("/", async (req, res) => {
       dob &&
       nationality &&
       role &&
-      gender
+      gender &&
+      story
     )
   ) {
     return res.status(400).send("Required fields missing");
@@ -58,6 +60,7 @@ router.post("/", async (req, res) => {
     validID,
     employment_history,
     skills,
+    story,
   });
 
   const doneeDir = newDonee._id;
@@ -177,6 +180,38 @@ router.get("/verified", (req, res) => {
     .catch((err) => {
       logger.log(err);
       res.status(400).send(err);
+    });
+});
+
+//  get all verified donees by role with pagination
+router.get("/verified/list", (req, res) => {
+  const pageNumber = req.query.pageNumber;
+  const pageSize = req.query.pageSize;
+
+  DoneeModel.find({
+    // role: req.query.role,
+    isVerified: true,
+  })
+    .skip((pageNumber - 1) * pageSize)
+    .limit(pageSize)
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    });
+});
+
+// counting the #of courses per instructor id
+router.get("/verified/count/", (req, res) => {
+  DoneeModel.find({
+    // role: req.query.role,
+    isVerified: true,
+  })
+    .count()
+    .then((no) => res.json(no))
+    .catch((err) => {
+      res.status(400).json("invalid course id");
     });
 });
 
