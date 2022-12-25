@@ -150,7 +150,7 @@ router.post("/", async (req, res) => {
 });
 
 // find donee by id
-router.get("one/:id/", (req, res) => {
+router.get("/one/:id/", (req, res) => {
   DoneeModel.findOne({ _id: req.params.id })
     .then((doc) => res.json(doc))
     .catch((err) => res.status(400).json("Error: " + err));

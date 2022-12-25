@@ -122,15 +122,25 @@ router.get("/all", async (req, res) => {
     .catch((err) => res.status(500).send("Something went wrong"));
 });
 
-router.get("/auth", auth, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    console.log(req.user);
-    const user = await User.findById(req.user._id).select("-password");
+    // console.log(req.user);
+    const user = await User.findById(req.params.id).select("-password");
     res.send(user);
   } catch (error) {
+    console.log(error);
     res.status(400).send("Something went wrong");
   }
 });
+// router.get("/auth", auth, async (req, res) => {
+//   try {
+//     console.log(req.user);
+//     const user = await User.findById(req.user._id).select("-password");
+//     res.send(user);
+//   } catch (error) {
+//     res.status(400).send("Something went wrong");
+//   }
+// });
 
 router.get("/dashborad", auth, (req, res) => {
   res.send("Success");
