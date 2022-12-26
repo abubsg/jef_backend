@@ -73,7 +73,9 @@ router.post("/", async (req, res) => {
       .catch((err) => {
         _data.deleteDir(`.data/donee/${doneeDir}`, (delerr) => {
           if (delerr) console.log(delerr);
-          res.status(400).send("Phone, email, nin is not unique, already exits");
+          res
+            .status(400)
+            .send("Phone, email or ID is not unique, already exits");
         });
       });
   }
@@ -144,6 +146,7 @@ router.post("/", async (req, res) => {
           saveToDB();
         }
       } catch (err) {
+        console.log(err);
         return res.status(500).send(err);
       }
     }
