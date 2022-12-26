@@ -75,7 +75,7 @@ router.post("/", async (req, res) => {
           if (delerr) console.log(delerr);
           res
             .status(400)
-            .send("Phone, email or ID is not unique, already exits");
+            .send("Phone, email, nin is not unique, already exits");
         });
       });
   }
@@ -154,7 +154,7 @@ router.post("/", async (req, res) => {
 });
 
 // find donee by id
-router.get("one/:id/", (req, res) => {
+router.get("/one/:id/", (req, res) => {
   DoneeModel.findOne({ _id: req.params.id })
     .then((doc) => res.json(doc))
     .catch((err) => res.status(400).json("Error: " + err));
@@ -235,6 +235,19 @@ router.put("/approval/:id/", (req, res) => {
       res.json(doc);
     })
     .catch((err) => {
+      res.status(500).json(err);
+    });
+});
+
+// updating a donee
+router.put("/update/:id/", (req, res) => {
+  console.log(req.body);
+  DoneeModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((err) => {
+      console.log(err);
       res.status(500).json(err);
     });
 });
