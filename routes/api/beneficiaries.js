@@ -238,6 +238,19 @@ router.put("/approval/:id/", (req, res) => {
     });
 });
 
+// updating a donee
+router.put("/update/:id/", (req, res) => {
+  console.log(req.body);
+  DoneeModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    .then((doc) => {
+      res.json(doc);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
 // gey profile pic/avatar
 router.get("/downloadProfilePic", (req, res) => {
   const dirname = req.query.fileName;
