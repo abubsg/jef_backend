@@ -132,6 +132,7 @@ router.get("/:id", async (req, res) => {
     res.status(400).send("Something went wrong");
   }
 });
+
 // router.get("/auth", auth, async (req, res) => {
 //   try {
 //     console.log(req.user);
