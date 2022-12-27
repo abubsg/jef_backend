@@ -43,7 +43,7 @@ const doneeSchema = new mongoose.Schema({
     minLength: 5,
   },
   dob: { type: Date, required: true },
-  nationality: { type: Object, required: true },
+  nationality: { type: Object },
   story: { type: String, required: true },
   // password: { type: String, minLength: 4, maxLength: 1024, required: true },
   role: { type: String, enum: ["widow", "orphan"], required: true },
