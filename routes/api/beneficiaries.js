@@ -15,10 +15,8 @@ router.post("/", async (req, res) => {
     email,
     phone,
     dob,
-    nationality,
     role,
     gender,
-    bank_details,
     validID,
     employment_history,
     skills,
@@ -36,7 +34,6 @@ router.post("/", async (req, res) => {
       email &&
       phone &&
       dob &&
-      nationality &&
       role &&
       gender &&
       story
@@ -44,6 +41,24 @@ router.post("/", async (req, res) => {
   ) {
     return res.status(400).send("Required fields missing");
   }
+
+  const nationality = {
+    nationality: req.body.nationality,
+    stateOfOrigin: req.body.stateOfOrigin,
+    localGovernmentArea: req.body.localGovernmentArea,
+    residentialAddress: {
+      houseNo: req.body.houseNo,
+      street: req.body.street,
+      state: req.body.state,
+      country: req.body.country,
+    },
+  };
+
+  const bank_details = {
+    acct_no: req.body.acct_no,
+    acct_name: req.body.acct_name,
+    bank: req.body.bank,
+  };
 
   const newDonee = await new DoneeModel({
     first_name,
@@ -238,7 +253,6 @@ router.put("/approval/:id/", (req, res) => {
 
 // updating a donee
 router.put("/update/:id/", (req, res) => {
-  console.log(req.body);
   DoneeModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((doc) => {
       res.json(doc);
