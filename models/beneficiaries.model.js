@@ -43,6 +43,7 @@ const doneeSchema = new mongoose.Schema({
     minLength: 5,
   },
   dob: { type: Date, required: true },
+  dateAdded: { type: Date, required: true, default: Date.now },
   nationality: { type: Object },
   story: { type: String, required: true },
   // password: { type: String, minLength: 4, maxLength: 1024, required: true },
@@ -77,6 +78,7 @@ const doneeSchema = new mongoose.Schema({
   },
 
   isVerified: { type: Boolean, default: false, enum: [true, false] },
+  isSponsored: { type: Boolean, default: false, enum: [true, false] },
 });
 
 doneeSchema.methods.generateAuthToken = function () {

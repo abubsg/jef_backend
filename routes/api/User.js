@@ -133,6 +133,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// updating a donee
+router.put("/update/:id/", (req, res) => {
+  User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+    .then((doc) => {
+      delete doc.password;
+      res.json(doc);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
 // router.get("/auth", auth, async (req, res) => {
 //   try {
 //     console.log(req.user);
