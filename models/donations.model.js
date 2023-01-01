@@ -3,36 +3,42 @@ const Schema = mongoose.Schema;
 
 const donationsSchema = new Schema(
   {
-    donorFirst_name: {
+    name: {
       type: String,
       minLength: 3,
       maxLength: 50,
     },
-    donorLast_name: {
+    email: {
       type: String,
-      minLength: 3,
       maxLength: 50,
+      minLength: 3,
     },
-    donorEmail: {
+    status: {
       type: String,
-      maxLength: 50,
-      minLength: 3,
+    },
+    flw_ref: {
+      type: String,
+      required: true,
+    },
+    tx_ref: {
+      type: String,
+      required: true,
+    },
+    amount: { type: Number, required: true },
+    transaction_id: {
+      type: String,
+      required: true,
+    },
+    currency: { type: String, required: true },
+    purpose: {
+      type: String,
+      // required: true,
+      enum: ["donation", "sponsorship"],
     },
     paymentDate: {
       type: Date,
       default: Date.now,
     },
-    status: {
-      type: String,
-      enum: ["success", "failed", "pending"],
-    },
-    reference: {
-      type: String,
-      required: true,
-    },
-    amount: { type: Number, required: true },
-    recieptient: { type: String, default: null },
-    purpose: { type: String, required: true, enum: ["donation", "sponsorship"] },
   },
   { timestamps: true }
 );

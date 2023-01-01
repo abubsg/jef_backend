@@ -24,29 +24,31 @@ router.get("/transaction/:id", function (req, res) {
 // add a new Donations
 router.post("/", async (req, res) => {
   const {
-    donorFirst_name,
-    donorLast_name,
-    donorEmail,
+    name,
+    email,
     status,
-    reference,
+    flw_ref,
+    tx_ref,
     amount,
-    recieptient,
+    transaction_id,
+    currency,
     purpose,
   } = req.body;
 
   // validating if there is req.body
-  if (!(reference && amount && purpose)) {
+  if (!email && amount) {
     return res.status(400).send("Required fields missing");
   }
 
   const newDonation = new Donations({
-    donorFirst_name,
-    donorLast_name,
-    donorEmail,
+    name,
+    email,
     status,
-    reference,
+    flw_ref,
+    tx_ref,
     amount,
-    recieptient,
+    transaction_id,
+    currency,
     purpose,
   });
 
