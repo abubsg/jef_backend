@@ -7,6 +7,7 @@ const role = require("../routes/api/role");
 const events = require("../routes/api/events");
 const sponsors = require("../routes/api/sponsors");
 const app_config = require("../routes/api/app_config");
+const donations = require("../routes/api/donations");
 // const courseRate = require("../routes/api/courseRating");
 const user = require("../routes/api/User");
 const fileUpload = require("express-fileupload");
@@ -23,6 +24,7 @@ module.exports = function (app) {
   app.use("/api/events", events);
   app.use("/api/sponsors", sponsors);
   app.use("/api/app_configs", app_config);
+  app.use("/api/donations", donations);
   // app.use("/api/courseRate", courseRate);
   app.use("/api/users", user);
   app.use("/api/auth", auth);
