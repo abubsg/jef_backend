@@ -190,7 +190,7 @@ router.get("/verified/list", (req, res) => {
   const pageSize = req.query.pageSize;
 
   DoneeModel.find({
-    // role: req.query.role,
+    role: req.query.role,
     isVerified: true,
   })
     .skip((pageNumber - 1) * pageSize)
