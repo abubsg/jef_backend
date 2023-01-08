@@ -13,6 +13,9 @@ const donationsSchema = new Schema(
       maxLength: 50,
       minLength: 3,
     },
+    phone: {
+      type: String,
+    },
     status: {
       type: String,
     },
@@ -34,6 +37,15 @@ const donationsSchema = new Schema(
       type: String,
       // required: true,
       enum: ["donation", "sponsorship"],
+    },
+    doneeID: {
+      type: String,
+    },
+    doneeName: {
+      type: String,
+    },
+    role: {
+      type: String,
     },
     paymentDate: {
       type: Date,
