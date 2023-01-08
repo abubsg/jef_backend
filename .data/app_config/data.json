@@ -22,52 +22,47 @@
       "Lorem ipsum dolor"
     ]
   },
+  "founderMsg": {
+    "img":"img/potrait.jpeg"
+  },
   "Gallery": [
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/01-large.jpg",
-      "smallImage": "img/portfolio/01-small.jpg"
+    "img":"img/gallery/g.jpeg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/02-large.jpg",
-      "smallImage": "img/portfolio/02-small.jpg"
+    "img":"img/gallery/g.jpg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/03-large.jpg",
-      "smallImage": "img/portfolio/03-small.jpg"
+    "img":"img/gallery/g2.jpeg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/04-large.jpg",
-      "smallImage": "img/portfolio/04-small.jpg"
+    "img":"img/gallery/g2.jpg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/05-large.jpg",
-      "smallImage": "img/portfolio/05-small.jpg"
+    "img":"img/gallery/g3.jpg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/06-large.jpg",
-      "smallImage": "img/portfolio/06-small.jpg"
+    "img":"img/gallery/g4.jpeg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/07-large.jpg",
-      "smallImage": "img/portfolio/07-small.jpg"
+    "img":"img/gallery/g5.jpg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/08-large.jpg",
-      "smallImage": "img/portfolio/08-small.jpg"
+    "img":"img/gallery/g6.jpg"
     },
     {
-      "title": "Project Title",
-      "largeImage": "img/portfolio/09-large.jpg",
-      "smallImage": "img/portfolio/09-small.jpg"
+    "img":"img/gallery/g12.jpg"
+    },
+    {
+    "img":"img/gallery/g27.jpg"
+    },
+    {
+    "img":"img/gallery/g30.jpeg"
+    },
+    {
+    "img":"img/gallery/g34.jpg"
     }
+   
   ],
   "Services": [
     {
@@ -161,9 +156,9 @@
     }
   ],
   "Contact": {
-    "address": "4321 California St, San Francisco, CA 12345 ",
-    "phone": "+1 123 456 1234",
-    "email": "info@company.com",
+    "address":"SQ 18 UNIT 1, PARADISE ESTATE 1, LIFE CAMP, FCT, ABUJA",
+    "phone": "08033513025, 07060658977",
+    "email": "info@cjulietefemenafoundation.com",
     "facebook": "fb.com",
     "twitter": "twitter.com",
     "youtube": "youtube.com"
