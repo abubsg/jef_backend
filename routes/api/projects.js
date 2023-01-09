@@ -65,7 +65,16 @@ router.get("/eventsByID/:id", function (req, res) {
 
 // add a new event
 router.post("/", async (req, res) => {
-  const { postedBy, description, title, startDate, endDate, address } = req.body;
+  const {
+    postedBy,
+    description,
+    title,
+    startDate,
+    endDate,
+    address,
+    longitude,
+    latitude,
+  } = req.body;
   // validating if there is req.body
   if (!(postedBy && description && title && startDate)) {
     return res.status(400).send("Required fields missing");
@@ -75,6 +84,8 @@ router.post("/", async (req, res) => {
     postedBy,
     description,
     address,
+    longitude,
+    latitude,
     title,
     startDate,
     endDate,
