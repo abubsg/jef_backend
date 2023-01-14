@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "server",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "start": "node server.js"
   },
   "author": "Abubakar SG, Mahmoud Garba, Hassan Jah",
   "license": "ISC",
