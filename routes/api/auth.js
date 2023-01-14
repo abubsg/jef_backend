@@ -3,9 +3,10 @@ const auth = require("../../middleware/auth");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
 const router = express.Router();
-const { User } = require("../../models/user.model");
+const { User } = require("../../models/Users.model");
 
 router.post("/", async (req, res) => {
+  // console.log(req.body);
   const { error } = validateBody(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
