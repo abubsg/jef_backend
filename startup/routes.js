@@ -5,6 +5,7 @@ const error = require("../middleware/error");
 const beneficiaries = require("../routes/api/beneficiaries");
 const role = require("../routes/api/role");
 const events = require("../routes/api/events");
+const projects = require("../routes/api/projects");
 const sponsors = require("../routes/api/sponsors");
 const app_config = require("../routes/api/app_config");
 const donations = require("../routes/api/donations");
@@ -22,6 +23,7 @@ module.exports = function (app) {
   app.use("/api/beneficiaries", beneficiaries);
   app.use("/api/role", role);
   app.use("/api/events", events);
+  app.use("/api/projects", projects);
   app.use("/api/sponsors", sponsors);
   app.use("/api/app_configs", app_config);
   app.use("/api/donations", donations);

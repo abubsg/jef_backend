@@ -23,46 +23,45 @@
     ]
   },
   "founderMsg": {
-    "img":"img/potrait.jpeg"
+    "img": "img/potrait.jpeg"
   },
   "Gallery": [
     {
-    "img":"img/gallery/g.jpeg"
+      "img": "img/gallery/g.jpeg"
     },
     {
-    "img":"img/gallery/g.jpg"
+      "img": "img/gallery/g.jpg"
     },
     {
-    "img":"img/gallery/g2.jpeg"
+      "img": "img/gallery/g2.jpeg"
     },
     {
-    "img":"img/gallery/g2.jpg"
+      "img": "img/gallery/g2.jpg"
     },
     {
-    "img":"img/gallery/g3.jpg"
+      "img": "img/gallery/g3.jpg"
     },
     {
-    "img":"img/gallery/g4.jpeg"
+      "img": "img/gallery/g4.jpeg"
     },
     {
-    "img":"img/gallery/g5.jpg"
+      "img": "img/gallery/g5.jpg"
     },
     {
-    "img":"img/gallery/g6.jpg"
+      "img": "img/gallery/g6.jpg"
     },
     {
-    "img":"img/gallery/g12.jpg"
+      "img": "img/gallery/g12.jpg"
     },
     {
-    "img":"img/gallery/g27.jpg"
+      "img": "img/gallery/g27.jpg"
     },
     {
-    "img":"img/gallery/g30.jpeg"
+      "img": "img/gallery/g30.jpeg"
     },
     {
-    "img":"img/gallery/g34.jpg"
+      "img": "img/gallery/g34.jpg"
     }
-   
   ],
   "Services": [
     {
@@ -156,7 +155,7 @@
     }
   ],
   "Contact": {
-    "address":"SQ 18 UNIT 1, PARADISE ESTATE 1, LIFE CAMP, FCT, ABUJA",
+    "address": "SQ 18 UNIT 1, PARADISE ESTATE 1, LIFE CAMP, FCT, ABUJA",
     "phone": "08033513025, 07060658977",
     "email": "info@cjulietefemenafoundation.com",
     "facebook": "fb.com",
