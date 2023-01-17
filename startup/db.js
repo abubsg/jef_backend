@@ -7,8 +7,10 @@ module.exports = function () {
   let uri;
   if (process.env.NODE_ENV === "production") {
     uri = uri_online;
+    console.log("production");
   } else {
     uri = uri_local;
+    console.log("development");
   }
 
   mongoose.connect(uri).then(() => logger.info("MongoDB connected"));
