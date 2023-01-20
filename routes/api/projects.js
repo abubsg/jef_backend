@@ -67,6 +67,7 @@ router.get("/eventsByID/:id", function (req, res) {
 router.post("/", async (req, res) => {
   const {
     postedBy,
+    category,
     description,
     title,
     startDate,
@@ -82,6 +83,7 @@ router.post("/", async (req, res) => {
 
   const newEvent = new ProjectsModel({
     postedBy,
+    category,
     description,
     address,
     longitude,
@@ -90,6 +92,7 @@ router.post("/", async (req, res) => {
     startDate,
     endDate,
     upload: [],
+    uploadPrp: [],
   });
 
   const eventsDir = newEvent._id;
@@ -139,14 +142,43 @@ router.post("/", async (req, res) => {
             };
           });
 
+          const mediaLinkPrp = await req.files.mediaLinkPrp.map(
+            (media, idx) => {
+              let newFilePrp = media;
+
+              // get the file extension
+              const mediaLinkExtPrp = path.extname(newFilePrp.name);
+
+              // change the file name
+              newFilePrp.name = `event_${title}_${idx}_P${mediaLinkExtPrp}`;
+
+              // function to get the mimetype of the file
+              const mediaLinkMimePrp = newFilePrp.mimetype;
+
+              //Use the mv() method to place the file in the course directory
+              const filePath = `.data/projects/${eventsDir}/${newFilePrp.name}`;
+              newFilePrp.mv(filePath);
+
+              return {
+                path: filePath,
+                extName: mediaLinkExtPrp,
+                mediaLinkMime: mediaLinkMimePrp,
+                name: newFilePrp.name,
+                type: getFileTypeFromMime(mediaLinkMimePrp, mediaLinkExtPrp),
+              };
+            }
+          );
+
           // save the media proterties arr in the document
           newEvent.upload = mediaLink;
+          newEvent.uploadPrp = mediaLinkPrp;
 
           saveToDB();
         } else {
           saveToDB();
         }
       } catch (err) {
+        console.log(err);
         return res.status(500).send(err);
       }
     }
@@ -167,7 +199,9 @@ router.get("/downloadEventMedia/", (req, res) => {
 
 // updating an event
 router.put("/details/:id/", (req, res) => {
-  ProjectsModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  ProjectsModel.findOneAndUpdate({ _id: req.params.id }, req.body, {
+    new: true,
+  })
     .then((doc) => {
       res.json(doc);
     })
@@ -182,7 +216,9 @@ router.put("/changeEventMedia/:id", (req, res) => {
     return res.status(400).send("No files uploaded");
   }
 
-  ProjectsModel.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  ProjectsModel.findOneAndUpdate({ _id: req.params.id }, req.body, {
+    new: true,
+  })
     .then(async (doc) => {
       const course = doc.course;
       const moduleDir = doc._id;

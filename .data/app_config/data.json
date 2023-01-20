@@ -29,40 +29,21 @@
     {
       "img": "img/gallery/g.jpeg"
     },
-    {
-      "img": "img/gallery/g.jpg"
-    },
+   
     {
       "img": "img/gallery/g2.jpeg"
     },
-    {
-      "img": "img/gallery/g2.jpg"
-    },
-    {
-      "img": "img/gallery/g3.jpg"
-    },
+
+    
     {
       "img": "img/gallery/g4.jpeg"
-    },
-    {
-      "img": "img/gallery/g5.jpg"
-    },
-    {
-      "img": "img/gallery/g6.jpg"
-    },
-    {
-      "img": "img/gallery/g12.jpg"
-    },
-    {
-      "img": "img/gallery/g27.jpg"
-    },
-    {
-      "img": "img/gallery/g30.jpeg"
-    },
-    {
-      "img": "img/gallery/g34.jpg"
     }
+   
+ 
+   
+ 
   ],
+  "GalleryVideos": [ {"vid": "img/gallery/g1.mp4" }, {"vid":"img/gallery/g2.mp4"}],
   "Services": [
     {
       "icon": "fa fa-wordpress",
