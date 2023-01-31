@@ -125,6 +125,23 @@ router.put("/update/:id/", (req, res) => {
 //     res.status(400).send("Something went wrong");
 //   }
 // });
+router.post("/verifyPassword/:id", async (req, res) => {
+  const user = await User.findById(req.params.id).select("password");
+  if (!user) return res.status(400).send("Invalid ID");
+
+  const isValid = await bcrypt.compare(req.body.password, user.password);
+  res.send(isValid);
+});
+
+router.post("/changePassword/:id", async (req, res) => {
+  let user = await User.findById(req.params.id);
+  if (!user) return res.status(400).send("Invalid ID");
+  const salt = await bcrypt.genSalt(10);
+  const newPassword = await bcrypt.hash(req.body.password, salt);
+  user.password = newPassword;
+  user = await user.save();
+  res.send("password changed successfully");
+});
 
 router.get("/dashborad", auth, (req, res) => {
   res.send("Success");
