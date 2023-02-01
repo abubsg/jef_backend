@@ -129,6 +129,7 @@ router.get("/downloadHomePageVid/", (req, res) => {
   try {
     res.sendFile(mediaPath);
   } catch (err) {
+    console.log(err);
     res.json({ message: err.message });
   }
 });

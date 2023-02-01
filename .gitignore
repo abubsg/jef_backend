@@ -5,8 +5,7 @@
 /.pnp
 .pnp.js
 
-# media
-# /.data/
+
 
 # testing
 /coverage
