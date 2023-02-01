@@ -23,9 +23,11 @@ router.get("/transaction/:id", function (req, res) {
 
 // add a new Donations
 router.post("/", async (req, res) => {
+  console.log(req.body);
   const {
     name,
     email,
+    phone,
     status,
     flw_ref,
     tx_ref,
@@ -33,6 +35,9 @@ router.post("/", async (req, res) => {
     transaction_id,
     currency,
     purpose,
+    doneeID,
+    doneeName,
+    role,
   } = req.body;
 
   // validating if there is req.body
@@ -43,6 +48,7 @@ router.post("/", async (req, res) => {
   const newDonation = new Donations({
     name,
     email,
+    phone,
     status,
     flw_ref,
     tx_ref,
@@ -50,6 +56,9 @@ router.post("/", async (req, res) => {
     transaction_id,
     currency,
     purpose,
+    doneeID,
+    doneeName,
+    role,
   });
 
   newDonation
