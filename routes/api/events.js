@@ -99,7 +99,7 @@ router.post("/", async (req, res) => {
     if (err) {
       return res.status(500).send(err);
     } else {
-      // save course image to the dir
+      // save event media to the dir
       try {
         if (req.files) {
           const mediaLink = await req.files.mediaLink.map((media, idx) => {
@@ -226,6 +226,25 @@ router.put("/changeEventMedia/:id", (req, res) => {
     .catch((err) => {
       res.status(400).send(err);
     });
+});
+
+// delete a donee
+router.delete("/:id/", (req, res) => {
+  _data.deleteDir(`.data/events/${req.params.id}`, (err) => {
+    if (err) {
+      return res.status(500).send("try again later");
+    }
+
+    EventsModel.findOneAndRemove({
+      _id: req.params.id,
+    })
+      .then((doc) => {
+        res.json(doc);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  });
 });
 
 module.exports = router;
