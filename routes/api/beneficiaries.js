@@ -86,7 +86,7 @@ router.post("/", async (req, res) => {
       .save()
       .then((doc) => res.status(200).json(doc))
       .catch((err) => {
-        _data.deleteDir(`data/donee/${doneeDir}`, (delerr) => {
+        _data.deleteDir(`upload/donee/${doneeDir}`, (delerr) => {
           if (delerr) console.log(delerr);
           res
             .status(400)
@@ -96,8 +96,10 @@ router.post("/", async (req, res) => {
   }
 
   // Save the Avatar to a dir
+  // console.log(doneeDir, _data.baseDir);
   _data.createDir(doneeDir, _data.baseDir + "/donee", async (err) => {
     if (err) {
+      console.log(err);
       return res.status(500).send(err);
     } else {
       // save course image to the dir
@@ -116,7 +118,7 @@ router.post("/", async (req, res) => {
             const ID_imageLinkMime = newFile.mimetype;
 
             //Use the mv() method to place the file in the donee directory
-            const filePath = `data/donee/${doneeDir}/${newFile.name}`;
+            const filePath = `upload/donee/${doneeDir}/${newFile.name}`;
             newFile.mv(filePath);
 
             // save the media proterties arr in the document
@@ -143,7 +145,7 @@ router.post("/", async (req, res) => {
             const avatarLinkMime = newFile.mimetype;
 
             //Use the mv() method to place the file in the donee directory
-            const filePath = `data/donee/${doneeDir}/${newFile.name}`;
+            const filePath = `upload/donee/${doneeDir}/${newFile.name}`;
             newFile.mv(filePath);
 
             // save the media proterties arr in the document
@@ -295,7 +297,7 @@ router.put("/addProfilePic/:id", async (req, res) => {
         newFile.name = "profilePic.jpeg";
 
         //Use the mv() method to place the file in the course directory
-        const filePath = `data/${doneeDir}/${newFile.name}`;
+        const filePath = `upload/${doneeDir}/${newFile.name}`;
         newFile.mv(filePath);
 
         DoneeModel.findOneAndUpdate(
