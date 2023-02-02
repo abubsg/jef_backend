@@ -116,7 +116,7 @@ router.post("/", async (req, res) => {
             const ID_imageLinkMime = newFile.mimetype;
 
             //Use the mv() method to place the file in the donee directory
-            const filePath = `.data/donee/${doneeDir}/${newFile.name}`;
+            const filePath = `data/donee/${doneeDir}/${newFile.name}`;
             newFile.mv(filePath);
 
             // save the media proterties arr in the document
