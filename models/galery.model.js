@@ -14,4 +14,4 @@ const gallerySchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("gallery", gallerySchema);
+module.exports = mongoose.model("gallry", gallerySchema);
