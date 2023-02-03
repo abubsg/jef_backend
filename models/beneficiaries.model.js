@@ -47,7 +47,11 @@ const doneeSchema = new mongoose.Schema({
   nationality: { type: Object },
   story: { type: String, required: true },
   // password: { type: String, minLength: 4, maxLength: 1024, required: true },
-  role: { type: String, enum: ["widow", "orphan"], required: true },
+  role: {
+    type: String,
+    enum: ["widow", "orphan", "less-privileged"],
+    required: true,
+  },
   gender: {
     type: String,
     required: true,
