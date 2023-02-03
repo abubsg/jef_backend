@@ -141,37 +141,38 @@ router.post("/", async (req, res) => {
               type: getFileTypeFromMime(mediaLinkMime, mediaLinkExt),
             };
           });
+          if (req.files.mediaLinkPrp) {
+            const mediaLinkPrp = await req.files.mediaLinkPrp.map(
+              (media, idx) => {
+                let newFilePrp = media;
 
-          const mediaLinkPrp = await req.files.mediaLinkPrp.map(
-            (media, idx) => {
-              let newFilePrp = media;
+                // get the file extension
+                const mediaLinkExtPrp = path.extname(newFilePrp.name);
 
-              // get the file extension
-              const mediaLinkExtPrp = path.extname(newFilePrp.name);
+                // change the file name
+                newFilePrp.name = `event_${title}_${idx}_P${mediaLinkExtPrp}`;
 
-              // change the file name
-              newFilePrp.name = `event_${title}_${idx}_P${mediaLinkExtPrp}`;
+                // function to get the mimetype of the file
+                const mediaLinkMimePrp = newFilePrp.mimetype;
 
-              // function to get the mimetype of the file
-              const mediaLinkMimePrp = newFilePrp.mimetype;
+                //Use the mv() method to place the file in the course directory
+                const filePath = `.data/projects/${eventsDir}/${newFilePrp.name}`;
+                newFilePrp.mv(filePath);
 
-              //Use the mv() method to place the file in the course directory
-              const filePath = `.data/projects/${eventsDir}/${newFilePrp.name}`;
-              newFilePrp.mv(filePath);
-
-              return {
-                path: filePath,
-                extName: mediaLinkExtPrp,
-                mediaLinkMime: mediaLinkMimePrp,
-                name: newFilePrp.name,
-                type: getFileTypeFromMime(mediaLinkMimePrp, mediaLinkExtPrp),
-              };
-            }
-          );
+                return {
+                  path: filePath,
+                  extName: mediaLinkExtPrp,
+                  mediaLinkMime: mediaLinkMimePrp,
+                  name: newFilePrp.name,
+                  type: getFileTypeFromMime(mediaLinkMimePrp, mediaLinkExtPrp),
+                };
+              }
+            );
+          }
 
           // save the media proterties arr in the document
           newEvent.upload = mediaLink;
-          newEvent.uploadPrp = mediaLinkPrp;
+          if (req.files.mediaLinkPrp) newEvent.uploadPrp = mediaLinkPrp;
 
           saveToDB();
         } else {

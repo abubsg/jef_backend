@@ -9,6 +9,7 @@ const projects = require("../routes/api/projects");
 const sponsors = require("../routes/api/sponsors");
 const app_config = require("../routes/api/app_config");
 const donations = require("../routes/api/donations");
+const gallery = require("../routes/api/gallery");
 // const courseRate = require("../routes/api/courseRating");
 const user = require("../routes/api/User");
 const fileUpload = require("express-fileupload");
@@ -27,6 +28,7 @@ module.exports = function (app) {
   app.use("/api/sponsors", sponsors);
   app.use("/api/app_configs", app_config);
   app.use("/api/donations", donations);
+  app.use("/api/gallery", gallery);
   // app.use("/api/courseRate", courseRate);
   app.use("/api/users", user);
   app.use("/api/auth", auth);
