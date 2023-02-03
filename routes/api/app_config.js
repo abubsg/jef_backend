@@ -98,74 +98,62 @@ router.put("/founder", async (req, res) => {
 
 // app_config data update -- gallery
 router.put("/gallery", async (req, res) => {
-  // validating if there is req.files
   if (!req.files) {
-    return res.status(400).send("Required fields missing");
+    return res.send({
+      status: false,
+      message: "No file uploaded",
+    });
   }
 
-  const newGallery = new GalleryModel({
-    upload: [],
-  });
+  _data.deleteDir(".data/app_config/gallery/media", (err) => {
+    if (!err) {
+      try {
+        _data.createDir(
+          "media",
+          _data.baseDir + "/app_config/gallery",
+          async (err) => {
+            if (err) {
+              return res.status(500).send(err);
+            } else {
+              // save event media to the dir
+              try {
+                await req.files.media.map((media, idx) => {
+                  let newFile = media;
 
-  const newGalleryDir = newGallery._id;
+                  // get the file extension
+                  const mediaLinkExt = path.extname(newFile.name);
 
-  function saveToDB() {
-    // Save the new module to database
-    newGallery
-      .save()
-      .then((doc) => res.status(200).json(doc))
-      .catch((err) => {
-        _data.deleteDir(`.data/app_config/gallery/${newGalleryDir}`, () =>
-          res.status(500).send("try again later")
+                  // change the file name
+                  newFile.name = `g${idx}${mediaLinkExt}`;
+
+                  // function to get the mimetype of the file
+                  const mediaLinkMime = newFile.mimetype;
+
+                  //Use the mv() method to place the file in the course directory
+                  const filePath = `.data/app_config/gallery/media/${newFile.name}`;
+                  newFile.mv(filePath);
+
+                  return {
+                    path: filePath,
+                    extName: mediaLinkExt,
+                    mediaLinkMime,
+                    name: newFile.name,
+                    type: getFileTypeFromMime(mediaLinkMime, mediaLinkExt),
+                  };
+                });
+
+                res.json("File Uploaded!");
+              } catch (err) {
+                return res.status(500).send(err);
+              }
+            }
+          }
         );
-      });
-  }
-
-  // Save the media to a dir
-  _data.createDir(
-    newGalleryDir,
-    _data.baseDir + "/app_config/gallery",
-    async (err) => {
-      if (err) {
-        return res.status(500).send(err);
-      } else {
-        // save event media to the dir
-        try {
-          const mediaLink = await req.files.media.map((media, idx) => {
-            let newFile = media;
-
-            // get the file extension
-            const mediaLinkExt = path.extname(newFile.name);
-
-            // change the file name
-            newFile.name = `g${idx}${mediaLinkExt}`;
-
-            // function to get the mimetype of the file
-            const mediaLinkMime = newFile.mimetype;
-
-            //Use the mv() method to place the file in the course directory
-            const filePath = `.data/app_config/gallery/${newGalleryDir}/${newFile.name}`;
-            newFile.mv(filePath);
-
-            return {
-              path: filePath,
-              extName: mediaLinkExt,
-              mediaLinkMime,
-              name: newFile.name,
-              type: getFileTypeFromMime(mediaLinkMime, mediaLinkExt),
-            };
-          });
-
-          // save the media proterties arr in the document
-          newGallery.upload = mediaLink;
-
-          saveToDB();
-        } catch (err) {
-          return res.status(500).send(err);
-        }
+      } catch (err) {
+        res.status(500).send(err);
       }
     }
-  );
+  });
 });
 
 // app_config home vid update
