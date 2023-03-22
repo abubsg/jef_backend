@@ -92,16 +92,16 @@ router.get("/all", async (req, res) => {
     .catch((err) => res.status(500).send("Something went wrong"));
 });
 
-// router.get("/:id", async (req, res) => {
-//   try {
-//     // console.log(req.user);
-//     const user = await User.findById(req.params.id).select("-password");
-//     res.send(user);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).send("Something went wrong");
-//   }
-// });
+router.get("/:id", async (req, res) => {
+  try {
+    // console.log(req.user);
+    const user = await User.findById(req.params.id).select("-password");
+    res.send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send("Something went wrong");
+  }
+});
 
 // updating a donee
 router.put("/update/:id/", (req, res) => {

@@ -32,7 +32,7 @@ router.get("/allFuture", async (req, res) => {
 });
 
 /*Get events By ID (month)*/
-router.get("/eventsByID/:id", function (req, res) {
+router.get("/projectsByID/:id", function (req, res) {
   ProjectsModel.findById(req.params.id)
     .populate({
       path: "postedBy",
@@ -64,6 +64,7 @@ router.get("/eventsByID/:id", function (req, res) {
 // });
 
 // add a new event
+
 router.post("/", async (req, res) => {
   const {
     postedBy,
@@ -81,7 +82,7 @@ router.post("/", async (req, res) => {
     return res.status(400).send("Required fields missing");
   }
 
-  const newEvent = new ProjectsModel({
+  const newProject = new ProjectsModel({
     postedBy,
     category,
     description,
@@ -95,11 +96,11 @@ router.post("/", async (req, res) => {
     uploadPrp: [],
   });
 
-  const eventsDir = newEvent._id;
+  const eventsDir = newProject._id;
 
   function saveToDB() {
     // Save the new module to database
-    newEvent
+    newProject
       .save()
       .then((doc) => res.status(200).json(doc))
       .catch((err) => {
@@ -124,7 +125,7 @@ router.post("/", async (req, res) => {
             const mediaLinkExt = path.extname(newFile.name);
 
             // change the file name
-            newFile.name = `event_${title}_${idx}${mediaLinkExt}`;
+            newFile.name = `project${title}_${idx}${mediaLinkExt}`;
 
             // function to get the mimetype of the file
             const mediaLinkMime = newFile.mimetype;
@@ -150,7 +151,7 @@ router.post("/", async (req, res) => {
                 const mediaLinkExtPrp = path.extname(newFilePrp.name);
 
                 // change the file name
-                newFilePrp.name = `event_${title}_${idx}_P${mediaLinkExtPrp}`;
+                newFilePrp.name = `project${title}_${idx}_P${mediaLinkExtPrp}`;
 
                 // function to get the mimetype of the file
                 const mediaLinkMimePrp = newFilePrp.mimetype;
@@ -168,18 +169,18 @@ router.post("/", async (req, res) => {
                 };
               }
             );
+
+            newProject.uploadPrp = mediaLinkPrp;
           }
 
           // save the media proterties arr in the document
-          newEvent.upload = mediaLink;
-          if (req.files.mediaLinkPrp) newEvent.uploadPrp = mediaLinkPrp;
+          newProject.upload = mediaLink;
 
           saveToDB();
         } else {
           saveToDB();
         }
       } catch (err) {
-        console.log(err);
         return res.status(500).send(err);
       }
     }
@@ -187,7 +188,7 @@ router.post("/", async (req, res) => {
 });
 
 // downloading Event Media
-router.get("/downloadEventMedia/", (req, res) => {
+router.get("/downloadProjectMedia/", (req, res) => {
   const dirname = req.query.fileName;
   const mediaPath = path.join(_data.baseDirPath, dirname);
 
@@ -199,16 +200,94 @@ router.get("/downloadEventMedia/", (req, res) => {
 });
 
 // updating an event
-router.put("/details/:id/", (req, res) => {
-  ProjectsModel.findOneAndUpdate({ _id: req.params.id }, req.body, {
-    new: true,
-  })
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+router.put("/update/:id/", async (req, res) => {
+  const id = req.params.id;
+  const title = req.body.title;
+
+  const projectDB = await ProjectsModel.findById(id);
+
+  const updateToDB = (mediaLink, mediaLinkPrp) => {
+    ProjectsModel.findOneAndUpdate(
+      { _id: id },
+      {
+        ...req.body,
+        upload: [...projectDB.upload, ...mediaLink],
+        uploadPrp: [...projectDB.uploadPrp, ...mediaLinkPrp],
+      },
+      {
+        new: true,
+      }
+    )
+      .then((doc) => {
+        res.json(doc);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  };
+
+  try {
+    if (req.files) {
+      const mediaLink = await req.files.mediaLink.map((media, idx) => {
+        let newFile = media;
+
+        // get the file extension
+        const mediaLinkExt = path.extname(newFile.name);
+
+        // change the file name
+        newFile.name = `project${title}_${idx}_update${mediaLinkExt}`;
+
+        // function to get the mimetype of the file
+        const mediaLinkMime = newFile.mimetype;
+
+        //Use the mv() method to place the file in the course directory
+        const filePath = `.data/projects/${id}/${newFile.name}`;
+        newFile.mv(filePath);
+
+        return {
+          path: filePath,
+          extName: mediaLinkExt,
+          mediaLinkMime,
+          name: newFile.name,
+          type: getFileTypeFromMime(mediaLinkMime, mediaLinkExt),
+        };
+      });
+
+      let mediaLinkPrp;
+      if (req.files.mediaLinkPrp) {
+        mediaLinkPrp = await req.files.mediaLinkPrp.map((media, idx) => {
+          let newFilePrp = media;
+
+          // get the file extension
+          const mediaLinkExtPrp = path.extname(newFilePrp.name);
+
+          // change the file name
+          newFilePrp.name = `project${title}_${idx}_P_update${mediaLinkExtPrp}`;
+
+          // function to get the mimetype of the file
+          const mediaLinkMimePrp = newFilePrp.mimetype;
+
+          //Use the mv() method to place the file in the course directory
+          const filePath = `.data/projects/${id}/${newFilePrp.name}`;
+          newFilePrp.mv(filePath);
+
+          return {
+            path: filePath,
+            extName: mediaLinkExtPrp,
+            mediaLinkMime: mediaLinkMimePrp,
+            name: newFilePrp.name,
+            type: getFileTypeFromMime(mediaLinkMimePrp, mediaLinkExtPrp),
+          };
+        });
+      }
+
+      updateToDB(mediaLink, req.files.mediaLinkPrp && mediaLinkPrp);
+    } else {
+      updateToDB();
+    }
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 });
 
 // in progress
@@ -275,6 +354,61 @@ router.put("/changeEventMedia/:id", (req, res) => {
     .catch((err) => {
       res.status(400).send(err);
     });
+});
+
+// delete a donee
+router.delete("/:id/", (req, res) => {
+  _data.deleteDir(`.data/events/${req.params.id}`, (err) => {
+    if (err) {
+      return res.status(500).send("try again later");
+    }
+
+    EventsModel.findOneAndRemove({
+      _id: req.params.id,
+    })
+      .then((doc) => {
+        res.json(doc);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  });
+});
+
+// delete a project media
+router.delete("/deleteProjectMedia/:id/", async (req, res) => {
+  const dirname = req.query.fileName;
+  const fileIdx = Number(req.query.fileIdx);
+  const uploadType = Number(req.query.type);
+
+  _data.delete(dirname, async (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).send("try again later");
+    }
+
+    const projectDB = await ProjectsModel.findById(req.params.id);
+
+    if (uploadType === 1) {
+      projectDB.upload.splice(fileIdx, 1);
+    } else if (uploadType === 2) {
+      projectDB.uploadPrp.splice(fileIdx, 1);
+    }
+
+    ProjectsModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { upload: projectDB.upload, uploadPrp: projectDB.uploadPrp },
+      {
+        new: true,
+      }
+    )
+      .then((doc) => {
+        res.json(doc);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
+  });
 });
 
 module.exports = router;
