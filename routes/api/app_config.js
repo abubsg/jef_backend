@@ -2,6 +2,7 @@ const router = require("express").Router();
 const path = require("path");
 const _data = require("../../lib/data");
 const getFileTypeFromMime = require("../../hooks/getFileType");
+const fs = require("fs");
 
 const GalleryModel = require("../../models/gallery.model");
 
@@ -195,6 +196,38 @@ router.get("/downloadHomePageVid/", (req, res) => {
     console.log(err);
     res.json({ message: err.message });
   }
+});
+
+router.get("/gallery/list", (req, res) => {
+  const dirPath = path.join(
+    _data.baseDirPath,
+    ".data/app_config/gallery/media"
+  );
+
+  fs.readdir(dirPath, (err, files) => {
+    if (err)
+      return res.status(500).json({ error: "Could not read media files" });
+
+    const galleryFiles = files.map((file) => ({
+      name: file,
+      url: `/static/gallery/${file}`,
+    }));
+
+    res.json(galleryFiles);
+  });
+});
+
+router.delete("/gallery/:imageName", (req, res) => {
+  const imagePath = `.data/app_config/gallery/media/${req.params.imageName}`;
+
+  _data.delete(imagePath, (err) => {
+    if (err) {
+      return res
+        .status(404)
+        .json({ error: "Image not found or already deleted" });
+    }
+    res.json({ message: "Image deleted successfully" });
+  });
 });
 
 module.exports = router;

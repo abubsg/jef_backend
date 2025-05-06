@@ -44,47 +44,6 @@ router.post("/", async (req, res) => {
   res.header("x-auth-token", token).send({ token });
 });
 
-// login
-// router.post("/login", async (req, res) => {
-//   try {
-//     // get data from FE
-//     const { email, password } = req.body;
-
-//     // validation
-//     if (!(email && password)) {
-//       res.status(400).send("missing required fields");
-//     }
-
-//     // find user
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       return res.status(400).send("user does not exists");
-//     }
-
-//     // match password
-//     if (user && bcrypt.compare(password, user.password)) {
-//       const token = jwtSign(user._id);
-//       user.token = token;
-//       user.password = undefined;
-
-//       // send a token & cookie
-//       const options = {
-//         expires: new Date(Date.now() + 3 * 24 * 60 * 1000),
-//         httpOnly: true,
-//       };
-
-//       return res.status(200).cookie("token", token, options).json({
-//         success: true,
-//         token,
-//         user,
-//       });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 router.get("/all", async (req, res) => {
   User.find()
     .select("-password")
@@ -94,7 +53,6 @@ router.get("/all", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    // console.log(req.user);
     const user = await User.findById(req.params.id).select("-password");
     res.send(user);
   } catch (error) {
@@ -103,7 +61,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// updating a donee
+// updating a user
 router.put("/update/:id/", (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((doc) => {
@@ -116,15 +74,36 @@ router.put("/update/:id/", (req, res) => {
     });
 });
 
-// router.get("/auth", auth, async (req, res) => {
-//   try {
-//     console.log(req.user);
-//     const user = await User.findById(req.user._id).select("-password");
-//     res.send(user);
-//   } catch (error) {
-//     res.status(400).send("Something went wrong");
-//   }
-// });
+// Delete a user
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    // Check if the user exists
+    const userToDelete = await User.findById(req.params.id);
+    if (!userToDelete) {
+      return res.status(404).send("User not found");
+    }
+
+    // Prevent users from deleting themselves
+    if (req.user._id.toString() === userToDelete._id.toString()) {
+      return res.status(403).send("You cannot delete your own account");
+    }
+
+    // // Only allow admins to delete users
+    // if (req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .send({ message: "Only admin users can delete accounts" });
+    // }
+
+    // Delete the user
+    await User.findByIdAndDelete(req.params.id);
+    res.send("User deleted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Something went wrong while deleting the user");
+  }
+});
+
 router.post("/verifyPassword/:id", async (req, res) => {
   const user = await User.findById(req.params.id).select("password");
   if (!user) return res.status(400).send("Invalid ID");
